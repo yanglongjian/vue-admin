@@ -9,7 +9,7 @@
         <div class="theme-icon-content-header" :style="{ 'background-color': header }"></div>
         <div class="theme-icon-content-main" :style="{ 'background-color': main }">
           <div class="active" v-if="active === name">
-            <i class="el-icon-check" :style="{'color': activeColor}"></i>
+            <i class="sfont system-success" :style="{'color': activeColor}"></i>
           </div>
         </div>
       </div>
@@ -19,7 +19,7 @@
   
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 export default defineComponent({
   props: {
@@ -125,6 +125,6 @@ export default defineComponent({
 
   }
   .theme-icon+.theme-icon{
-    margin-left: 20px;
+    margin-left: 12px;
   }
 </style>

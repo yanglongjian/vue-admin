@@ -38,7 +38,7 @@
   </el-container>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, computed, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -113,8 +113,9 @@ export default defineComponent({
   background-color: var(--system-container-background);
   height: 100%;
   padding: 0;
+  overflow-x: hidden;
 }
-.el-main-box {
+:deep(.el-main-box) {
   width: 100%;
   height: 100%;
   overflow-y: auto;

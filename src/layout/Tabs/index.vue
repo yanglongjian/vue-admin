@@ -1,6 +1,11 @@
 <template>
   <div class="tabs">
-    <el-scrollbar class="scroll-container tags-view-container" ref="scrollbarDom">
+    <el-scrollbar
+      class="scroll-container tags-view-container"
+      ref="scrollbarDom"
+      @wheel.passive="handleWhellScroll"
+      @scroll="handleScroll"
+    >
       <Item
         v-for="menu in menuList"
         :key="menu.meta.title"
@@ -11,43 +16,56 @@
       />
     </el-scrollbar>
     <div class="handle">
+      <div id="vueAdminBoxTabRefresh" @click="pageReload"></div>
+      <div id="vueAdminBoxTabCloseSelf" @click="closeCurrentRoute"></div>
+      <div id="vueAdminBoxTabCloseOther" @click="closeOtherRoute"></div>
+      <div id="vueAdminBoxTabCloseAll" @click="closeAllRoute"></div>
       <el-dropdown placement="bottom">
         <div class="el-dropdown-link">
-          <i class="el-icon-arrow-down el-icon--right"></i>
+          <el-icon><ArrowDown /></el-icon>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item icon="el-icon-refresh-left" @click="pageReload">{{ $t('message.system.tab.reload') }}</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-close" :disabled="currentDisabled" @click="closeCurrentRoute">{{ $t('message.system.tab.closeCurrent') }}</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-close" :disabled="menuList.length < 3" @click="closeOtherRoute">{{ $t('message.system.tab.closeOther') }}</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-close" :disabled="menuList.length <= 1" @click="closeAllRoute">{{ $t('message.system.tab.closeAll') }}</el-dropdown-item>
+            <el-dropdown-item class="tab-ddropdown-item" :icon="RefreshLeft" @click="pageReload">{{ $t('message.system.tab.reload') }}</el-dropdown-item>
+            <el-dropdown-item class="tab-ddropdown-item" :icon="CircleClose" :disabled="currentDisabled" @click="closeCurrentRoute">{{ $t('message.system.tab.closeCurrent') }}</el-dropdown-item>
+            <el-dropdown-item class="tab-ddropdown-item" :icon="CircleClose" :disabled="menuList.length < 3" @click="closeOtherRoute">{{ $t('message.system.tab.closeOther') }}</el-dropdown-item>
+            <el-dropdown-item class="tab-ddropdown-item" :icon="CircleClose" :disabled="menuList.length <= 1" @click="closeAllRoute">{{ $t('message.system.tab.closeAll') }}</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
       <el-tooltip class="item" effect="dark" :content="contentFullScreen ? $t('message.system.fullScreenBack'):$t('message.system.fullScreen')" placement="bottom">
-        <i class="el-icon-full-screen" @click="onFullscreen"></i>
+        <el-icon @click="onFullscreen"><FullScreen /></el-icon>
       </el-tooltip>
     </div>
   </div>
 </template>
 
-<script>
-import Item from './item.vue'
+<script lang="ts">
+/** 类型引用 */
+import type { Ref } from 'vue'
+import type { ElScrollbar } from 'element-plus'
+
+/** 引用vue系列函数 */
 import { defineComponent, computed, unref, watch, reactive, ref, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
+
+/** 引用图标 */
+import { ArrowDown, RefreshLeft, CircleClose, FullScreen } from '@element-plus/icons'
+
+import Item from './item.vue'
 import tabsHook from './tabsHook'
 
 export default defineComponent({
   components: {
-    Item
+    Item, ArrowDown, FullScreen
   },
   setup() {
     const store = useStore()
     const route = useRoute()
     const router = useRouter()
-    const scrollbarDom = ref(null)
-    const allRoutes = router.options.routes
+    const scrollbarDom: Ref<typeof ElScrollbar|null> = ref(null)
+    const scrollLeft = ref(0)
     const defaultMenu = {
       path: '/dashboard',
       meta: { title: 'message.menu.dashboard.index', hideClose: true }
@@ -55,15 +73,15 @@ export default defineComponent({
     const contentFullScreen = computed(() => store.state.app.contentFullScreen)
     const currentDisabled = computed(() => route.path === defaultMenu.path)
 
-    let activeMenu = reactive({ path: '' })
+    let activeMenu: any = reactive({ path: '' })
     let menuList = ref(tabsHook.getItem())
     if (menuList.value.length === 0) { // 判断之前有没有调用过
       addMenu(defaultMenu)
-    } 
-    watch(menuList.value, (newVal) => {
+    }
+    watch(menuList.value, (newVal: []) => {
       tabsHook.setItem(newVal)
     })
-    watch(menuList, (newVal) => {
+    watch(menuList, (newVal: []) => {
       tabsHook.setItem(newVal)
     })
     router.afterEach(() => {
@@ -77,15 +95,17 @@ export default defineComponent({
     }
     // 当前页面组件重新加载
     function pageReload() {
-      const self = route.matched[route.matched.length-1].instances.default
-      
+      const self: any = route.matched[route.matched.length-1].instances.default
+
       self.handleReload();
     }
 
     // 关闭当前标签，首页不关闭
     function closeCurrentRoute() {
       if (route.path !== defaultMenu.path) {
-        delMenu(route)
+        const tab = document.getElementById('vueAdminBoxTabCloseSelf')
+        const nextPath = tab?.getAttribute('nextPath')
+        delMenu(route, nextPath)
       }
     }
     // 关闭除了当前标签之外的所有标签
@@ -105,12 +125,12 @@ export default defineComponent({
     }
 
     // 添加新的菜单项
-    function addMenu(menu) {
+    function addMenu(menu: any) {
       let { path, meta, name } = menu
       if (meta.hideTabs) {
         return
       }
-      let hasMenu = menuList.value.some((obj) => {
+      let hasMenu = menuList.value.some((obj: any) => {
         return obj.path === path
       })
       if (!hasMenu) {
@@ -123,14 +143,18 @@ export default defineComponent({
     }
 
     // 删除菜单项
-    function delMenu(menu) {
+    function delMenu(menu: any, nextPath?: string) {
       let index = 0
       if (!menu.meta.hideClose) {
         if (menu.meta.cache && menu.name) {
           store.commit('keepAlive/delKeepAliveComponentsName', menu.name)
         }
-        index = menuList.value.findIndex((item) => item.path === menu.path)
+        index = menuList.value.findIndex((item: any) => item.path === menu.path)
         menuList.value.splice(index, 1)
+      }
+      if (nextPath) {
+        router.push(nextPath)
+        return
       }
       if (menu.path === activeMenu.path) {
         index - 1 > 0 ? router.push(menuList.value[index - 1].path) : router.push(defaultMenu.path)
@@ -138,24 +162,28 @@ export default defineComponent({
     }
 
     // 初始化activeMenu
-    function initMenu(menu) {
+    function initMenu(menu: object) {
       activeMenu = menu
       nextTick(() => {
         setPosition()
       })
     }
-    // 设置当前滚动条应该在的位置
+    /** 设置当前滚动条应该在的位置 */
     function setPosition() {
       if (scrollbarDom.value) {
         const domBox = {
-          scrollbar: scrollbarDom.value.scrollbar.querySelector('.el-scrollbar__wrap '),
-          activeDom: scrollbarDom.value.scrollbar.querySelector('.active'),
-          activeFather: scrollbarDom.value.scrollbar.querySelector('.el-scrollbar__view')
+          scrollbar: scrollbarDom.value.scrollbar$.querySelector('.el-scrollbar__wrap ') as HTMLDivElement,
+          activeDom: scrollbarDom.value.scrollbar$.querySelector('.active') as HTMLDivElement,
+          activeFather: scrollbarDom.value.scrollbar$.querySelector('.el-scrollbar__view') as HTMLDivElement
         }
-        for (let i in domBox) {
-          if (!domBox[i]) {
-            return
+        let hasDoms = true
+        Object.keys(domBox).forEach((dom) => {
+          if (!dom) {
+            hasDoms = false
           }
+        })
+        if (!hasDoms) {
+          return
         }
         const domData = {
           scrollbar: domBox.scrollbar.getBoundingClientRect(),
@@ -169,29 +197,50 @@ export default defineComponent({
 
     // 配置需要缓存的数据
     function setKeepAliveData() {
-      let keepAliveNames = []
-      menuList.value.forEach((menu) => {
+      let keepAliveNames: any[] = []
+      menuList.value.forEach((menu: any) => {
         menu.meta && menu.meta.cache && menu.name && keepAliveNames.push(menu.name)
       })
       store.commit('keepAlive/setKeepAliveComponentsName', keepAliveNames)
+    }
+
+    /** 监听鼠标滚动事件 */
+    function handleWhellScroll(e: any) {
+      let distance = 0
+      let speed = 5
+      if (e.wheelDelta > 30) {
+        distance = -10
+      } else if (e.wheelDelta < -30) {
+        distance = 10
+      }
+      // console.log(scrollLeft.value + eventDelta / 4)
+      scrollbarDom.value?.setScrollLeft(scrollLeft.value + distance * speed)
+    }
+
+    /** 监听滚动事件 */
+    function handleScroll({ scrollLeft: left }: { scrollLeft: number }) {
+      scrollLeft.value = left
     }
 
     // 初始化时调用：1. 新增菜单 2. 初始化activeMenu
     addMenu(route)
     initMenu(route)
     return {
+      RefreshLeft, CircleClose,
       contentFullScreen,
-      onFullscreen,
-      pageReload,
       scrollbarDom,
       // 菜单相关
       menuList,
       activeMenu,
+      currentDisabled,
+      onFullscreen,
+      pageReload,
       delMenu,
       closeCurrentRoute,
       closeOtherRoute,
       closeAllRoute,
-      currentDisabled
+      handleScroll,
+      handleWhellScroll
     }
   }
 })
@@ -231,13 +280,11 @@ export default defineComponent({
     position: relative;
     overflow: hidden;
     width: 100%;
-    :deep {
-      .el-scrollbar__bar {
-        bottom: 0px;
-      }
-      .el-scrollbar__wrap {
-        height: 49px;
-      }
+    :deep(.el-scrollbar__bar) {
+      bottom: 0px;
+    }
+    :deep(.el-scrollbar__wrap) {
+      height: 49px;
     }
   }
   .tags-view-container {
@@ -254,5 +301,9 @@ export default defineComponent({
     &:focus {
       outline: none;
     }
+  }
+  .tab-ddropdown-item {
+    display: flex;
+    align-items: center;
   }
 </style>

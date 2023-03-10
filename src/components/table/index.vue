@@ -2,6 +2,7 @@
   <div class="system-table-box">
     <el-table
       v-bind="$attrs"
+      ref="table"
       class="system-table"
       border
       height="100%"
@@ -32,8 +33,9 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, reactive } from 'vue'
+<script lang="ts">
+import { defineComponent, reactive, ref, onActivated, onMounted } from 'vue'
+import { Page } from '@/components/table/type'
 export default defineComponent({
   props: {
     data: { type: Array, default: () => [] }, // 数据源
@@ -51,9 +53,10 @@ export default defineComponent({
     pageSizes: { type: Array, default: [10, 20, 50, 100] }
   },
   setup(props, context) {
-    let timer = null
+    const table: any = ref(null)
+    let timer: any = null
     // 分页相关：监听页码切换事件
-    const handleCurrentChange = (val) => {
+    const handleCurrentChange = (val: Number) => {
       if (timer) {
         props.page.index = 1
       } else {
@@ -62,7 +65,7 @@ export default defineComponent({
       }
     }
     // 分页相关：监听单页显示数量切换事件
-    const handleSizeChange = (val) => {
+    const handleSizeChange = (val: Number) => {
       timer = 'work'
       setTimeout(() => {
         timer = null
@@ -71,10 +74,15 @@ export default defineComponent({
       context.emit("getTableData", true)
     }
     // 选择监听器
-    const handleSelectionChange = (val) =>{
+    const handleSelectionChange = (val: []) =>{
       context.emit("selection-change", val)
     }
+    // 解决BUG：keep-alive组件使用时，表格浮层高度不对的问题
+    onActivated(() => {
+      table.value.doLayout()
+    })
     return {
+      table,
       handleCurrentChange,
       handleSizeChange,
       handleSelectionChange

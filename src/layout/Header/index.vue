@@ -3,7 +3,7 @@
     <div class="left-box">
       <!-- 收缩按钮 -->
       <div class="menu-icon" @click="opendStateChange">
-        <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></i>
+        <i class="sfont head-fold" :class="isCollapse ? 'system-s-unfold' : 'system-s-fold'"></i>
       </div>
       <Breadcrumb />
     </div>
@@ -14,13 +14,14 @@
         <div class="function-list-item"><Word /></div>
         <div class="function-list-item"><SizeChange /></div>
         <div class="function-list-item hidden-sm-and-down"><Theme /></div>
+        <div class="function-list-item hidden-sm-and-down"><Github /></div>
       </div>
       <!-- 用户信息 -->
       <div class="user-info">
         <el-dropdown>
           <span class="el-dropdown-link">
             {{ $t('message.system.user') }}
-            <i class="el-icon-arrow-down el-icon--right"></i>
+            <i class="sfont system-xiala"></i>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
@@ -35,13 +36,14 @@
   </header>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, computed, reactive } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import FullScreen from './functionList/fullscreen.vue'
 import Word from './functionList/word.vue'
 import SizeChange from './functionList/sizeChange.vue'
+import Github from './functionList/github.vue'
 import Theme from './functionList/theme.vue'
 import Breadcrumb from './Breadcrumb.vue'
 import PasswordLayer from './passwordLayer.vue'
@@ -51,6 +53,7 @@ export default defineComponent({
     Breadcrumb,
     Word,
     SizeChange,
+    Github,
     Theme,
     PasswordLayer
   },
@@ -140,5 +143,8 @@ export default defineComponent({
         color: var(--system-header-breadcrumb-text-color);
       }
     }
+  }
+  .head-fold {
+    font-size: 20px;
   }
 </style>

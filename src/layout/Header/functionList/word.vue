@@ -18,7 +18,7 @@
   </el-dropdown>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -30,11 +30,11 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
     // 国际化语言切换
-    const handleCommand = (command) => {
+    const handleCommand = (command: string) => {
       locale.value = command
       store.commit('app/stateChange', { name: 'lang', value: command })
       changeTitle(route.meta.title)
-      document.querySelector('html').setAttribute('lang', command)
+      document.querySelector('html')!.setAttribute('lang', command)
     }
     return {
       handleCommand,

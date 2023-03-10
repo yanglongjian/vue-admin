@@ -1,24 +1,24 @@
 <template>
   <template v-if="!menu.hideMenu">
-    <el-submenu v-if="showMenuType === 2" :index="pathResolve">
+    <el-sub-menu v-if="showMenuType === 2" :index="pathResolve" :show-timeout="0" :hide-timeout="0">
       <template #title>
         <i :class="menu.meta.icon" v-if="menu.meta.icon"></i>
         <span>{{ $t(menu.meta.title) }}</span>
       </template>
       <menu-item v-for="(item, key) in menu.children" :key="key" :menu="item" :basePath="pathResolve" />
-    </el-submenu>
+    </el-sub-menu>
     <app-link v-else-if="showMenuType === 1" :to="pathResolve">
       <el-menu-item :index="pathResolve" v-if="!menu.children[0].children || menu.children[0].children.length === 0">
         <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i>
         <template #title>{{ $t(menu.children[0].meta.title) }}</template>
       </el-menu-item>
-      <el-submenu v-else :index="pathResolve">
+      <el-sub-menu v-else :index="pathResolve" :show-timeout="0" :hide-timeout="0">
         <template #title>
           <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i>
           <span>{{ $t(menu.children[0].meta.title) }}</span>
         </template>
         <menu-item v-for="(item, key) in menu.children[0].children" :key="key" :menu="item" :basePath="pathResolve" />
-      </el-submenu>
+      </el-sub-menu>
     </app-link>
     <app-link v-else :to="pathResolve">
       <el-menu-item :index="pathResolve">
@@ -29,8 +29,8 @@
   </template>
 </template>
 
-<script>
-import { defineComponent, computed, watch } from 'vue'
+<script lang="ts">
+import { defineComponent, computed } from 'vue'
 import appLink from './Link.vue'
 export default defineComponent({
   name: 'menu-item',
@@ -87,10 +87,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .el-submenu {
+  .el-sub-menu {
     text-align: left;
   }
   .el-menu-item {
     text-align: left;
+  }
+  .el-menu-item i, .el-sub-menu__title i {
+    padding-right: 8px;
   }
 </style>

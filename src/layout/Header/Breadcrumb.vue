@@ -14,16 +14,16 @@
   </el-breadcrumb>
 </template>
 
-<script>
-import { ref, defineComponent, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+<script lang="ts">
+import { ref, defineComponent, watch, Ref } from "vue";
+import { useRoute, useRouter, RouteLocationMatched } from "vue-router";
 export default defineComponent({
   name: "BreadCrumb",
   setup() {
-    const levelList = ref([]);
+    const levelList: Ref<RouteLocationMatched[]> = ref([]);
     const route = useRoute();
     const router = useRouter();
-    const getBreadcrumb = () => {
+    const getBreadcrumb = (): void => {
       let matched = route.matched.filter(item => item.meta && item.meta.title);
       const first = matched[0];
       levelList.value = matched.filter(
@@ -35,7 +35,7 @@ export default defineComponent({
       () => route.path,
       () => getBreadcrumb()
     );
-    const handleLink = (item) => {
+    const handleLink = (item: RouteLocationMatched): any => {
       const { redirect, path } = item;
       if (redirect) {
         router.push(redirect.toString());

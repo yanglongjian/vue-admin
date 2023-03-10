@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
 import { systemTitle } from '@/config'
@@ -30,7 +30,7 @@ export default defineComponent({
     width: 100%;
     background-color: var(--system-logo-background);
     h1 {
-      font-size: 20px;
+      font-size: 18px;
       white-space: nowrap;
       color: var(--system-logo-color);
     }

@@ -51,13 +51,25 @@
   </el-drawer>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref, reactive, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 import themeIcon from './theme/theme-icon.vue'
 import themeColor from './theme/theme-color.vue'
+import type { Style, Colors } from '@/theme/index'
 import { style } from '@/theme/index'
-import { useI18n } from 'vue-i18n'
+
+interface Option {
+  name: string,
+  value: boolean,
+  store: string
+}
+interface State {
+  style: string,
+  primaryColor: string,
+  menuType: string
+}
 export default defineComponent({
   components: {
     themeIcon,
@@ -67,7 +79,7 @@ export default defineComponent({
     const store = useStore()
     const { t } = useI18n()
     // 只取值，不做computed
-    const state = reactive({
+    const state: State = reactive({
       style: store.state.app.theme.state.style,
       primaryColor: store.state.app.theme.state.primaryColor,
       primaryTextColor: store.state.app.theme.state.primaryTextColor,
@@ -85,12 +97,15 @@ export default defineComponent({
       const userTheme = style[state.style]
       const body = document.getElementsByTagName('body')[0]
       // 设置全局顶部body上的class名称，即为主题名称，便于自定义配置符合当前主题的样式统一入口
-      body.className = state.style
+      body.setAttribute('data-theme', state.style)
       // 需要设置的颜色参照theme.scss，位置：assets/style/theme.scss
       // 设置主题色
       body.style.setProperty('--system-primary-color', state.primaryColor)
       for (let i in userTheme) {
-        const item = userTheme[i]
+        if (i === 'name') {
+          continue;
+        }
+        const item: any = userTheme[i as keyof Colors]
         for (let y in item) {
           let cssVarName = '--system-' + i + '-' + y.replace(/([A-Z])/g, "-$1").toLowerCase()
           body.style.setProperty(cssVarName, item[y])
@@ -116,10 +131,10 @@ export default defineComponent({
       { name: 'message.system.setting.other.showBreadcrumb', value: store.state.app.showTabs, store: 'showTabs' },
       { name: 'message.system.setting.other.keepOnlyOneMenu', value: store.state.app.expandOneMenu, store: 'expandOneMenu' }
     ])
-    const drawerChange = (value) => {
+    const drawerChange = (value: boolean) => {
       drawer.value = value
     }
-    const change = (option) => {
+    const change = (option: Option) => {
       store.commit(`app/stateChange`, { name: option.store, value: option.value })
     }
     setTheme()
