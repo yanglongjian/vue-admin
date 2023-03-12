@@ -1,5 +1,5 @@
 <template>
-  <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
+  <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:'100%'}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
   </div>
 </template>
@@ -59,13 +59,13 @@ export default {
     }
   },
   computed: {
-    containerWidth() {
-      const width = this.width
-      if (/^[\d]+(\.[\d]+)?$/.test(width)) { // matches `100`, `'100'`
-        return `${width}px`
-      }
-      return width
-    }
+    // containerWidth() {
+    //   const width = this.width
+    //   if (/^[\d]+(\.[\d]+)?$/.test(width)) { // matches `100`, `'100'`
+    //     return `${width}px`
+    //   }
+    //   return width
+    // }
   },
   watch: {
     modelValue(val) {

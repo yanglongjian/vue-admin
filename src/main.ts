@@ -1,7 +1,3 @@
-/*
- * @Date: 2022-05-22 20:44:25
- * @Description: 
- */
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import { baidu } from './utils/system/statistics'

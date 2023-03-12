@@ -1,7 +1,14 @@
+/*
+ * @Author: luoxi
+ * @Date: 2022-01-25 09:51:12
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-02-21 22:57:42
+ * @FilePath: \vue-admin-box\vite.config.ts
+ * @Description: 
+ */
 import { ConfigEnv, UserConfigExport } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { viteMockServe } from 'vite-plugin-mock'
-import {vitePluginSvg} from "@webxrd/vite-plugin-svg"
 import { resolve } from 'path'
 
 const pathResolve = (dir: string): any => {
@@ -43,7 +50,7 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
     plugins: [
       vue(),
       viteMockServe({
-        mockPath: 'mock',
+        mockPath: './src/mock',
         localEnabled: command === 'serve',
         prodEnabled: command !== 'serve' && prodMock,
         watchFiles: true,
@@ -52,16 +59,7 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
           setupProdMockServer();
         `,
         logger: true,
-      }),
-      vitePluginSvg({
-        // 必要的。必须是绝对路径组成的数组。
-        iconDirs: [
-            resolve(__dirname, 'src/assets/svg'),
-        ],
-        // 必要的。入口script
-        main: resolve(__dirname, 'src/main.js'),
-        symbolIdFormat: 'icon-[name]'
-      }),
+      })
     ],
     css: {
       postcss: {

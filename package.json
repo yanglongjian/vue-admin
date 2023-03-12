@@ -20,7 +20,7 @@
     "mockjs": "^1.1.0",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
-    "sortablejs": "^1.14.0",
+    "sortablejs": "^1.15.0",
     "splitpanes": "^3.1.1",
     "throttle-debounce": "^3.0.1",
     "v-contextmenu": "^3.0.0",
@@ -31,7 +31,6 @@
     "xlsx": "^0.18.3"
   },
   "devDependencies": {
-    "@webxrd/vite-plugin-svg": "^1.0.5",
     "@types/node": "^17.0.21",
     "@vitejs/plugin-vue": "^2.2.4",
     "@vue/compiler-sfc": "^3.2.31",

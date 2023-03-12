@@ -6,7 +6,7 @@
       @click="hideMenu"
     ></div>
     <el-aside
-      :width="isCollapse ? '60px' : '250px'"
+      :width="isCollapse ? '60px' : '210px'"
       :class="isCollapse ? 'hide-aside' : 'show-side'"
       v-show="!contentFullScreen"
     >

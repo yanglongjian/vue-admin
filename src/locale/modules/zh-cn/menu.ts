@@ -1,5 +1,6 @@
 /*
- * @Description: 菜单中文配置
+ * @Date: 2022-05-22 20:44:25
+ * @Description: 
  */
 export default {
   menu: {

@@ -20,8 +20,8 @@
      
      
      <!--分页-->
-     <div style="text-align: center;">
       <el-pagination
+        class="pagination"
         v-if="showPage"
         v-bind="$attrs"
         v-model:current-page="page.index"
@@ -35,7 +35,6 @@
         @size-change="handleSizeChange"
       >
       </el-pagination>
-     </div>
     </div>
   </template>
   
@@ -112,5 +111,9 @@
       .system-page {
         margin-top: 20px;
       }
+    }
+
+    .pagination{
+      margin: 10px auto 0;
     }
   </style>
