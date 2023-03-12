@@ -1,7 +1,7 @@
 <!--编辑表单-->
 <template>
   <div>
-    <el-form v-bind="$attrs" ref="editRef" :model="formModel" :rules="rules" :label-width="'120px'" status-icon>
+    <el-form v-bind="$attrs" ref="editRef" :model="formModel" :rules="rules" :label-width="labelWidth" :label-position="'right'" status-icon>
 
       <el-row :gutter="6">
         <template v-for="(item, i) in schemas" :key="i">
@@ -10,13 +10,11 @@
 
               <!--label提示信息-->
               <template #label>
-                <el-tooltip v-if="item.tooltip"
-                    effect="dark"
-                    :content="item.tooltip"
-                    placement="top"
-                  >
-                 <span> <el-icon><InfoFilled /></el-icon>{{ item.label }}</span>
-                  </el-tooltip>
+                <el-tooltip v-if="item.tooltip" effect="dark" :content="item.tooltip" placement="top">
+                  <span>{{ item.label }} <el-icon>
+                      <InfoFilled />
+                    </el-icon></span>
+                </el-tooltip>
               </template>
 
               <!--hidden-->
@@ -81,12 +79,8 @@
 
 
               <!--table-->
-              <eformtable  v-if="item.type == 'table'"
-                v-model="formModel[item.field]"
-                :columns="item.columns"
-                :addTemplate="item.addTemplate"
-                @update:model-errors="tableUpdate"
-                ></eformtable>
+              <eformtable v-if="item.type == 'table'" v-model="formModel[item.field]" :columns="item.columns"
+                :addTemplate="item.addTemplate" @update:model-errors="tableUpdate"></eformtable>
 
 
             </el-form-item>
@@ -103,7 +97,7 @@
 import { computed, ref, reactive, watch, nextTick, onMounted } from "vue";
 import tinymce from '@/components/tinymce/index.vue'
 import eformtable from '@/components/e-form-table/index.vue'
-import { InfoFilled} from '@element-plus/icons'
+import { InfoFilled } from '@element-plus/icons'
 import dayjs from "dayjs";
 const shortcuts = [
   {
@@ -138,13 +132,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  labelCol: {
+  labelWidth: {
     type: String,
-    default: "80px",
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
+    default: "120px",
   },
   schemas: {
     type: Array<any>,
@@ -152,12 +142,8 @@ const props = defineProps({
   },
   rules: {
     type: Object,
-    default:{},
-  },
-  btnTxt: {
-    type: String,
-    default: "关闭",
-  },
+    default: {},
+  }
 });
 
 onMounted(() => {
@@ -266,11 +252,11 @@ const handleSubmit = ({ values, errors }: { values: any; errors: any }) => {
 };
 </script>
 <style lang="scss" scoped>
-
-::v-deep .el-select{
+::v-deep .el-select {
   width: 100%;
 }
-::v-deep .el-cascader{
+
+::v-deep .el-cascader {
   width: 100%;
 }
 </style>

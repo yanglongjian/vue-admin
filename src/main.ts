@@ -15,6 +15,9 @@ if (import.meta.env.MODE !== 'development') { // 非开发环境调用百度统�
   baidu()
 }
 
+
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
 /** 权限路由处理主方法 */
 getAuthRoutes().then(() => {
   const app = createApp(App)
@@ -23,6 +26,12 @@ getAuthRoutes().then(() => {
   app.use(router)
   app.use(i18n)
   // app.config.performance = true
+
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
   app.mount('#app')
+
+ 
 })
 

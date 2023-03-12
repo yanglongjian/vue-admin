@@ -20,7 +20,7 @@
       <div id="vueAdminBoxTabCloseSelf" @click="closeCurrentRoute"></div>
       <div id="vueAdminBoxTabCloseOther" @click="closeOtherRoute"></div>
       <div id="vueAdminBoxTabCloseAll" @click="closeAllRoute"></div>
-      <el-dropdown placement="bottom">
+      <el-dropdown placement="bottom" size="default">
         <div class="el-dropdown-link">
           <el-icon><ArrowDown /></el-icon>
         </div>

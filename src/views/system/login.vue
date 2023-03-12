@@ -20,7 +20,8 @@
               maxlength="50"
           >
             <template #prepend>
-              <i class="sfont system-xingmingyonghumingnicheng"></i>
+              <el-icon><User /></el-icon>
+              <!-- <i class="sfont system-xingmingyonghumingnicheng"></i> -->
             </template>
           </el-input>
           <el-input
@@ -33,15 +34,15 @@
               maxlength="50"
           >
             <template #prepend>
-              <i class="sfont system-mima"></i>
+              <el-icon><Lock /></el-icon>
             </template>
             <template #append>
-              <i class="sfont password-icon" :class="passwordType ? 'system-yanjing-guan': 'system-yanjing'"
-                 @click="passwordTypeChange"></i>
+              <el-icon v-if="passwordType"  @click="passwordTypeChange"><Hide /></el-icon>
+              <el-icon v-else  @click="passwordTypeChange"><View /></el-icon>
             </template>
           </el-input>
 
-          <el-button type="primary" :loading="form.loading" @click="submit" style="width: 100%;" size="medium">
+          <el-button type="primary" :loading="form.loading" @click="submit" style="width: 100%;" size="default">
             {{ $t('message.system.login') }}
           </el-button>
         </el-form>

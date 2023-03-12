@@ -1,5 +1,7 @@
 <template>
-  <a href="https://github.com/cmdparkour/vue-admin-box" target="_blank" :title="$t('message.system.github')"><i class="sfont system-github" @click="toggle"></i></a>
+  <a href="https://github.com/cmdparkour/vue-admin-box" target="_blank" :title="$t('message.system.github')">
+    <el-icon><Service /></el-icon>
+  </a>
 </template>
 
 <script lang="ts">
@@ -10,16 +12,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  a {
-    &:focus {
-      outline: none;
-    }
+a {
+  &:focus {
+    outline: none;
   }
-  i {
-    cursor: pointer;
-    font-size: 18px;
-    &:focus {
-      outline: none;
-    }
+}
+
+i {
+  cursor: pointer;
+  font-size: 18px;
+
+  &:focus {
+    outline: none;
   }
-</style>
+}</style>

@@ -22,13 +22,16 @@ import { createNameComponent } from './createNode'
 import Dashboard from './modules/dashboard'
 import Admin from './modules/admin'
 import Cms from './modules/cms'
-
+import Shop from './modules/shop'
+import Wechat from './modules/wechat'
 
 /** 登录后需要动态加入的本地路由 */
 const asyncRoutes: Route[] = [
   ...Dashboard,
   ...Admin,
-  ...Cms
+  ...Cms,
+  ...Shop,
+  ...Wechat
 ]
 
 /** 

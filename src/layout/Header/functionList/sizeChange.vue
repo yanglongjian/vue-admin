@@ -1,7 +1,7 @@
 <template>
   <el-dropdown @command="handleCommand" size="medium">
     <span class="el-dropdown-link">
-      <i class="sfont system-zuixiaohua"></i>
+      <el-icon><Files /></el-icon>
     </span>
     <template #dropdown>
       <el-dropdown-menu>

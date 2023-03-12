@@ -3,18 +3,20 @@
 		<el-table :data="data" ref="table" border stripe>
 			<el-table-column type="index" width="50" fixed="left">
 				<template #header>
-					<el-button v-if="!hideAdd" type="primary" icon="el-icon-plus" size="small" circle @click="rowAdd"></el-button>
+					<el-button v-if="!hideAdd" type="primary" icon="CirclePlus" size="small" circle @click="rowAdd"></el-button>
 				</template>
 				<template #default="scope">
 					<div :class="['sc-form-table-handle', {'sc-form-table-handle-delete':!hideDelete}]">
 						<span>{{scope.$index + 1}}</span>
-						<el-button v-if="!hideDelete" type="danger" icon="el-icon-delete" size="small" plain circle @click="rowDel(scope.row, scope.$index)"></el-button>
+						<el-button v-if="!hideDelete" type="danger" icon="RemoveFilled" size="small" plain circle @click="rowDel(scope.row, scope.$index)"></el-button>
 					</div>
 				</template>
 			</el-table-column>
 			<el-table-column label="" width="50" v-if="dragSort">
 				<template #default>
-					<div class="move" style="cursor: move;"><el-icon-d-caret style="width: 1em; height: 1em;"/></div>
+					<div class="move" style="cursor: move;">
+						<el-icon style="width: 1em; height: 1em;"><CirclePlus /></el-icon>
+						</div>
 				</template>
 			</el-table-column>
 			<slot></slot>

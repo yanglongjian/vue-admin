@@ -2,19 +2,25 @@
   <template v-if="!menu.hideMenu">
     <el-sub-menu v-if="showMenuType === 2" :index="pathResolve" :show-timeout="0" :hide-timeout="0">
       <template #title>
-        <i :class="menu.meta.icon" v-if="menu.meta.icon"></i>
+        <!-- <i :class="menu.meta.icon" v-if="menu.meta.icon"></i> -->
+        <component style="width: 18px; height:18px;padding-right: 8px;" v-if="menu.meta.icon" :is="menu.meta.icon"></component>
         <span>{{ $t(menu.meta.title) }}</span>
       </template>
       <menu-item v-for="(item, key) in menu.children" :key="key" :menu="item" :basePath="pathResolve" />
     </el-sub-menu>
     <app-link v-else-if="showMenuType === 1" :to="pathResolve">
       <el-menu-item :index="pathResolve" v-if="!menu.children[0].children || menu.children[0].children.length === 0">
-        <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i>
+        <!-- <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i> -->
+
+        <component style="width: 18px; height:18px;padding-right: 8px;" v-if="menu.children[0].meta.icon || menu.meta.icon" :is="menu.children[0].meta.icon || menu.meta.icon"></component>
+
         <template #title>{{ $t(menu.children[0].meta.title) }}</template>
       </el-menu-item>
       <el-sub-menu v-else :index="pathResolve" :show-timeout="0" :hide-timeout="0">
         <template #title>
-          <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i>
+          <!-- <i :class="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></i> -->
+       <component  style="width: 18px; height:18px;padding-right: 8px;" v-if="menu.children[0].meta.icon || menu.meta.icon" :is="menu.children[0].meta.icon || menu.meta.icon"></component>
+
           <span>{{ $t(menu.children[0].meta.title) }}</span>
         </template>
         <menu-item v-for="(item, key) in menu.children[0].children" :key="key" :menu="item" :basePath="pathResolve" />
@@ -22,7 +28,8 @@
     </app-link>
     <app-link v-else :to="pathResolve">
       <el-menu-item :index="pathResolve">
-      <i :class="menu.meta.icon" v-if="menu.meta.icon"></i>
+      <!-- <i :class="menu.meta.icon" v-if="menu.meta.icon"></i> -->
+      <component style="width: 18px; height:18px;padding-right: 8px;" v-if="menu.meta.icon" :is="menu.meta.icon"></component>
       <template #title>{{ $t(menu.meta.title) }}</template>
       </el-menu-item>
     </app-link>
@@ -92,8 +99,5 @@ export default defineComponent({
   }
   .el-menu-item {
     text-align: left;
-  }
-  .el-menu-item i, .el-sub-menu__title i {
-    padding-right: 8px;
   }
 </style>

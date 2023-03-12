@@ -1,6 +1,6 @@
 <template>
   <div :title="$t('message.system.setting.name')" @click="drawerChange(true)">
-    <i class="sfont system-shezhi"></i>
+    <el-icon><Setting /></el-icon>
   </div>
   <el-drawer
     :title="$t('message.system.setting.name')"
