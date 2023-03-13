@@ -29,9 +29,9 @@ import Wechat from './modules/wechat'
 const asyncRoutes: Route[] = [
   ...Dashboard,
   ...Admin,
-  ...Cms,
-  ...Shop,
-  ...Wechat
+  // ...Cms,
+  // ...Shop,
+  // ...Wechat
 ]
 
 /** 
