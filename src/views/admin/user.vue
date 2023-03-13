@@ -1,9 +1,11 @@
 <template>
   <div class="layout-container">
 
-    <e-search :columns="columns"></e-search>
+    <!--查询表单-->
+    <e-search :columns="columns" :loading="loading" @search="search"></e-search>
 
-    <div style="display: flex;padding:0 15px;">
+    <!--按钮-->
+    <div class="layot-container-button">
       <el-button type="primary" :icon="Plus" @click="handleAdd">{{ $t('message.common.add') }}</el-button>
       <el-popconfirm :title="$t('message.common.delTip')" @confirm="handleDel(chooseData)">
         <template #reference>
@@ -20,7 +22,6 @@
         :data="tableData" @getTableData="getTableData" @selection-change="handleSelectionChange">
 
         <!--字段栏目-->
-
         <el-table-column prop="name" label="名称" sortable align="center" />
         <el-table-column prop="number" label="数字" sortable align="center" />
         <el-table-column prop="chooseName" label="选择器" sortable align="center" />
@@ -71,12 +72,24 @@ import EForm from '@/components/e-form/index.vue'
 
 import { Page } from '@/components/table/type'
 import { getData, del } from '@/api/table'
+
+import {read,create,update,deleted } from '@/api/admin/user'
 import { ElMessage, FormRules } from 'element-plus'
 
 import { selectData, radioData } from './enum'
 import { Plus, Search, Delete } from '@element-plus/icons'
 import { StatusOptions } from '@/types/global'
 
+// #region 查询
+
+const loading = ref(true)
+const tableData = ref([])
+// 分页参数, 供table使用
+const page: Page = reactive({
+  index: 1,
+  size: 20,
+  total: 0
+})
 const columns = ref([
   {
     label: "采集名称",
@@ -106,6 +119,50 @@ const columns = ref([
     type: "date",
   },
 ]);
+
+const search = async (rules:any[]) => {
+  page.index = 1;
+  await fetchData(rules);
+};
+
+const fetchData = (rules:any[]) => {
+  loading.value = true
+  let params = {
+    page: page.index,
+    pageSize: page.size,
+    rules
+  }
+  getData(params)
+    .then(res => {
+      tableData.value = res.data.list
+      page.total = Number(res.data.pager.total)
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
+
+fetchData([])
+//选中数据
+const chooseData = ref([])
+const handleSelectionChange = (val: []) => {
+  chooseData.value = val
+}
+// #endregion
+
+
+
+
+// 新增弹窗功能
+const handleAdd = () => {
+  editVisible.value = true;
+}
+// 编辑弹窗功能
+const handleEdit = (row: object) => {
+  editVisible.value = true;
+}
+
+
 
 
 //编辑
@@ -159,52 +216,6 @@ const schemas = computed<any[]>(() => [
     help: "自动采集的间隔分钟数,为0则不自动执行",
     span: 6,
   },
-  // {
-  //   label: "采集地址",
-  //   prop: "url",
-  //   type: "input",
-  //   span: 24,
-  // },
-  // {
-  //   label: "采集页数",
-  //   prop: "count",
-  //   type: "number",
-  //   help: "为0默认1页",
-  //   span: 6,
-  //   default: 1,
-  // },
-  // {
-  //   label: "参数",
-  //   prop: "parameter",
-  //   type: "input",
-  //   span: 6,
-  // },
-  // {
-  //   label: "参数累加",
-  //   prop: "isAdd",
-  //   type: "switch",
-  //   span: 12,
-  // },
-
-
-  // {
-  //   label: "列表开始",
-  //   prop: "begin",
-  //   type: "input",
-  //   span: 12,
-  // },
-  // {
-  //   label: "列表结束",
-  //   prop: "end",
-  //   type: "input",
-  //   span: 12,
-  // },
-  // {
-  //   label: "详情",
-  //   prop: "detail",
-  //   type: "editor",
-  //   span: 24,
-  // },
   {
     field: "configList",
     label: "采集配置",
@@ -356,7 +367,6 @@ const schemas = computed<any[]>(() => [
     ],
   },
 ]);
-
 const rules = reactive<FormRules>({
   name: [{ required: true, message: "请输入采集名称" }],
   collectType: [{ required: true, message: "请选择采集类型" }],
@@ -368,59 +378,6 @@ const rules = reactive<FormRules>({
   count: [{ required: true, message: "请输入采集数量" }],
 });
 
-
-
-// 存储搜索用的数据
-const query = reactive({
-  input: ''
-})
-// 分页参数, 供table使用
-const page: Page = reactive({
-  index: 1,
-  size: 20,
-  total: 0
-})
-const loading = ref(true)
-const tableData = ref([])
-const chooseData = ref([])
-const handleSelectionChange = (val: []) => {
-  chooseData.value = val
-}
-// 获取表格数据
-// params <init> Boolean ，默认为false，用于判断是否需要初始化分页
-const getTableData = (init: boolean) => {
-  loading.value = true
-  if (init) {
-    page.index = 1
-  }
-  let params = {
-    page: page.index,
-    pageSize: page.size,
-    ...query
-  }
-  getData(params)
-    .then(res => {
-      let data = res.data.list
-      if (Array.isArray(data)) {
-        data.forEach(d => {
-          const select = selectData.find(select => select.value === d.choose)
-          select ? d.chooseName = select.label : d.chooseName = d.choose
-          const radio = radioData.find(select => select.value === d.radio)
-          radio ? d.radioName = radio.label : d.radio
-        })
-      }
-      tableData.value = res.data.list
-      page.total = Number(res.data.pager.total)
-    })
-    .catch(error => {
-      tableData.value = []
-      page.index = 1
-      page.total = 0
-    })
-    .finally(() => {
-      loading.value = false
-    })
-}
 // 删除功能
 const handleDel = (data: object[]) => {
   let params = {
@@ -437,16 +394,6 @@ const handleDel = (data: object[]) => {
       getTableData(tableData.value.length === 1 ? true : false)
     })
 }
-// 新增弹窗功能
-const handleAdd = () => {
-  editVisible.value = true;
-}
-// 编辑弹窗功能
-const handleEdit = (row: object) => {
-  editVisible.value = true;
-}
-getTableData(true)
-
 </script>
 
 <style lang="scss" scoped></style>

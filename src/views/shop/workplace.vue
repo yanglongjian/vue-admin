@@ -1,67 +1,5 @@
 <template>
     <div class="workplace-container">
-        <div class="board">
-            <div class="board-left">
-                <div class="board-title"><span>工作台</span></div>
-                <div class="board-info">
-                    <img class="logo" :src="'https://avatars.githubusercontent.com/u/32290372?s=40&v=4'" />
-                    <div class="content">
-                        <span class="content-name">极客恰恰</span>
-                        <span class="content-title">高级前端开发工程师</span>
-                    </div>
-                </div>
-            </div>
-            <div class="board-right">
-                <div class="border-item">
-                    <div class="statistic">
-                        <span class="statistic-title">项目数</span>
-                        <span class="statistic-content">13</span>
-                    </div>
-                </div>
-                <div class="border-item">
-                    <div class="statistic">
-                        <span class="statistic-title">项目访问</span>
-                        <span class="statistic-content">336</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <el-row :gutter="20">
-            <el-col :span="15" class="progress-card">
-                <el-card class="box-card">
-                    <template #header>
-                        <div class="card-header">
-                            <span>所有项目</span>
-                            <el-button class="button" type="text">添加更多</el-button>
-                        </div>
-                    </template>
-                    <div class="card-container">
-                        <el-card v-for="card in cardInfo" :key="card.id" shadow="hover" class="card">
-                            <div class="card-title">
-                                <img :src="card.imgSrc" class="title-logo" />
-                                <span class="title-name" @click="handleLinkClick(card.link)">{{ card.cardTitle }}</span>
-                            </div>
-                            <div class="card-content">
-                                <span>
-                                    {{ card.cardContent }}
-                                </span>
-                            </div>
-                        </el-card>
-                    </div>
-                </el-card>
-            </el-col>
-            <el-col :span="8" class="radar-card">
-                <el-card class="box-card">
-                    <div ref="radarEchart" style="width: 100%; height: 391px" class="echart"></div>
-                </el-card>
-            </el-col>
-        </el-row>
-        <!-- <el-row :gutter="20">
-        <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
-      </el-row> -->
         <el-row>
             <el-col :gutter="20">
                 <div class="grid-content bg-purple-dark">
@@ -99,13 +37,43 @@
                 </div>
             </el-col>
         </el-row>
+        <el-row :gutter="20">
+            <el-col :span="16" class="progress-card">
+                <el-card class="box-card">
+                    <template #header>
+                        <div class="card-header">
+                            <span>所有项目</span>
+                            <el-button class="button" type="text">添加更多</el-button>
+                        </div>
+                    </template>
+                    <div class="card-container">
+                        <el-card v-for="card in cardInfo" :key="card.id" shadow="hover" class="card">
+                            <div class="card-title">
+                                <img :src="card.imgSrc" class="title-logo" />
+                                <span class="title-name" @click="handleLinkClick(card.link)">{{ card.cardTitle }}</span>
+                            </div>
+                            <div class="card-content">
+                                <span>
+                                    {{ card.cardContent }}
+                                </span>
+                            </div>
+                        </el-card>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="8" class="radar-card">
+                <el-card class="box-card">
+                    <div ref="radarEchart" style="width: 100%; height: 391px" class="echart"></div>
+                </el-card>
+            </el-col>
+        </el-row>
+
+     
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from 'vue'
 import * as Echarts from 'echarts'
-//   import avatar from '@/assets/avatar-default.jpg'
-
 export default defineComponent({
     name: 'Workplace',
     setup() {
@@ -247,6 +215,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .workplace-container {
     color: #000 padding 0px 20px background-color #fafbfe;
+    padding: 15px;
 
     .board {
         width: 100%;
@@ -458,4 +427,5 @@ export default defineComponent({
         }
     }
 
-}</style>
+}
+</style>

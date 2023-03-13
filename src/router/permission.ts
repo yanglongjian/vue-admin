@@ -30,7 +30,7 @@ const asyncRoutes: Route[] = [
   ...Dashboard,
   ...Admin,
   // ...Cms,
-  // ...Shop,
+  ...Shop,
   // ...Wechat
 ]
 

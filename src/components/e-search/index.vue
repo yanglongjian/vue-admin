@@ -5,9 +5,9 @@
     <!--表单-->
     <el-form v-bind="$attrs" ref="searchRef" :model="formModel" :label-width="'90px'" :label-position="'right'">
       <el-row :gutter="6">
-        <template v-for="(item, i) in list" :key="i">
+        <template v-for="(item, i) in columnList" :key="i">
           <el-col :span="6" v-show="i < showCount || expand">
-            <el-form-item :label="item.label">
+            <el-form-item :label="item.label" :prop="item.prop">
 
               <!--input-->
               <el-input v-if="item.type === 'input'" v-model="formModel[item.prop]" />
@@ -19,15 +19,12 @@
                   :value="option.value" />
               </el-select>
 
+              <!--cascader-->
+              <el-cascader v-if="item.type === 'cascader'" v-model="formModel[item.prop]" :options="item.options" />
+
               <!--date-->
               <el-date-picker v-if="item.type === 'date'" v-model="formModel[item.prop]" type="daterange" unlink-panels
                 range-separator="~" :shortcuts="shortcuts" start-placeholder="开始时间" end-placeholder="结束时间" />
-
-            <!--tree-->
-              <!-- <el-tree-select v-if="item.type === 'tree'" v-model="formModel[item.prop]" :data="item.options || []"
-                      :render-after-expand="false" /> -->
-
-
 
             </el-form-item>
           </el-col>
@@ -37,7 +34,7 @@
 
     <!--按钮-->
     <div class="search-btn">
-      <el-button :icon="Search" type="primary" @click="search">查询</el-button>
+      <el-button :loading="loading" :icon="Search" type="primary" @click="search">查询</el-button>
       <el-button :icon="RefreshLeft" @click="reset(searchRef)">重置</el-button>
       <el-button v-if="expand" :icon="ArrowUp" link @click="expand = !expand"></el-button>
       <el-button v-else :icon="ArrowDown" link @click="expand = !expand"></el-button>
@@ -47,10 +44,9 @@
 </template>
   
 <script lang="ts" setup>
-import { computed, ref, reactive, watch, nextTick, onMounted } from "vue";
-
+import { ref, watch } from "vue";
 import { Search, RefreshLeft, ArrowDown, ArrowUp } from "@element-plus/icons";
-import { FormInstance } from "element-plus";
+import { FormInstance, ElMessage } from "element-plus";
 import dayjs from "dayjs";
 const shortcuts = [
   {
@@ -68,13 +64,13 @@ const shortcuts = [
 ];
 
 const emits = defineEmits(["search"]);
-const searchRef = ref<FormInstance>()
 //查询表单
+const searchRef = ref<FormInstance>()
 const expand = ref(false);
 const formModel: any = ref();
-const list: any = ref([]);
+const columnList: any = ref([]);
 
-//Prop输入监听
+//传参
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -97,20 +93,18 @@ watch(
     let model: any = {};
     let filterList: any = [];
     array.forEach((item: any) => {
-      if (item.type && item.type !== "image") {
-        filterList.push(item);
-        switch (item.type) {
-          case "date":
-            model[item.prop] = [];
-            break;
-          default:
-            model[item.prop] = "";
-            break;
-        }
+      filterList.push(item);
+      switch (item.type) {
+        case "date":
+          model[item.prop] = [];
+          break;
+        default:
+          model[item.prop] = "";
+          break;
       }
     });
     formModel.value = model;
-    list.value = filterList;
+    columnList.value = filterList;
   },
   {
     immediate: true, // 这个属性是重点啦
@@ -120,21 +114,61 @@ watch(
 
 
 const search = () => {
-  //console.log(formModel.value);
+  let rules: any[] = [];
+  for (const item in formModel.value) {
+    let column = columnList.value.find((m: any) => m.prop === item)
+    if (!column) {
+      ElMessage({
+        type: 'warning',
+        message: `指定属性${item}不存在`
+      })
+      return;
+    }
+    const itemValue = formModel.value[item];
+
+    if (
+      !itemValue ||
+      itemValue == 0 ||
+      itemValue.length == 0
+    )
+      continue;
+
+    if (column.type === "date") {
+      rules.push({
+        Field: item,
+        Value: itemValue[0].toLocaleDateString(),
+        Operate: 8,
+      });
+      rules.push({
+        Field: item,
+        Value: itemValue[1].toLocaleDateString() + " 23:59:59",
+        Operate: 6,
+      });
+    } else {
+      rules.push({
+        Field: item,
+        Value: `${itemValue}`.trim(),
+        Operate: column.type === "input" ? 11 : 3
+      });
+    }
+  }
+  emits("search", rules);
 }
+
 
 
 const reset = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
+
 };
 </script>
 <style lang="scss" scoped>
-
 .el-form-item {
   margin-bottom: 10px;
 }
-.el-select{
+
+.el-select {
   width: 100%;
 }
 

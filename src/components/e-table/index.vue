@@ -10,11 +10,11 @@
         @selection-change="handleSelectionChange"
       >
       <el-table-column type="selection" align="center" width="50" v-if="showSelection" />
-        <el-table-column label="序号" width="60" align="center" v-if="showIndex">
+        <!-- <el-table-column label="序号" width="60" align="center" v-if="showIndex">
           <template #default="scope">
             {{ (page.index - 1) * page.size + scope.$index + 1 }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <slot></slot>
       </el-table>
      
@@ -108,12 +108,10 @@
         height: 100%;
       }
       
-      .system-page {
-        margin-top: 20px;
-      }
-    }
-
-    .pagination{
+      .pagination{
       margin: 10px auto 0;
     }
+    }
+
+ 
   </style>

@@ -52,6 +52,10 @@
       margin-bottom: 0;
     }
   }
+  &-button{
+    display: flex;
+    padding:0 15px;
+  }
   &-table {
     flex: 1;
     height: 100%;
